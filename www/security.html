@@ -1,0 +1,20 @@
+---
+layout: default
+title: Security Analysis
+---
+
+<div class="row">
+	<div class="col-xs-12">
+
+		<h1>Security Analysis</h1>
+
+		<h2>Handshake Modifications</h2>
+
+		<p>The mbTLS handshake comprises multiple standard TLS handshakes. By using TLS unmodified, it is easier to reason about the security of the overall mbTLS handshake.</p>
+
+		<p>However, to support SGX attestation from the middleboxes, we needed to make a small modification to the TLS 1.2 handshake. The modification to the handshake state machine is shown below in red:</p>
+
+		<img src="{{ site.baseurl }}/img/state_machines.png" width="100%"/>
+
+	</div>  <!-- col -->
+</div>  <!-- row -->

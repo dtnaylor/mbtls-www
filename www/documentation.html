@@ -1,0 +1,87 @@
+---
+layout: default
+---
+
+<div class="row">
+	<div class="col-xs-12">
+
+
+
+		<h1>Tech Specs</h1>
+	
+
+		<pre>
+New record types:
+VMP_RT_ENCAPSULATED  (30)
+
+The contents of an encapsulated record look like this:
+
+struct {
+	uint8 subchannelId;
+	opaque record[TLSPlaintext.length-1];
+} EncapsulatedRecord;
+
+Here, record is another complete TLS record. Because the inner record is the outer record’s payload, which is limited to 2^14 bytes, and because the subchannel ID uses 1 byte, the inner record’s payload is limited to 2^14-1 bytes.
+
+Encapsulated records may only be sent during handshake or renegotiation. 
+
+VMP_RT_KEY_MATERIAL  (31)
+
+struct {
+	uint32 key_len;
+	uint32 iv_len;
+	opaque clientWriteKey[key_len];
+	opaque clientWriteIV[iv_len];
+	opaque clientReadKey[key_len];
+	opaque clientReadIV[iv_len];
+	opaque serverWriteKey[key_len];
+	opaque serverWriteIV[iv_len];
+	opaque serverReadKey[key_len];
+	opaque serverReadIV[iv_len];
+} VMPGCMKeyMaterial;
+
+struct {
+	Version client_server_version;
+	opaque client_to_server_sequence[8];
+	opaque server_to_client_sequence[8];
+	CipherSuite cipher_suite;  /* 2 bytes */
+	select(cipher_suite) {
+		case TLS_RSA_WITH_AES_256_GCM_SHA384:
+		  VMPGCMKeyMaterial;
+	}
+} VMPKeyMaterial;
+
+The VMP key material message is always sent encapsulated in a VMP subchannel. It contains the TLS version negotiated between the client and the server, the sequence number for client-to-server data (write sequence from client’s perspective and read sequence from server’s) and the sequence number for server-to-client data. It also contains key and IV material in a format dependent on the cipher suite.
+
+
+
+The MiddleboxSupport extension carries one or more “optimistic” client handshakes:
+
+struct {
+	uint8 numHellos;
+	uint16 helloLengths[numHellos];
+	opaque clientHellos[numHellos];
+} MiddleboxSupportExtension;
+
+
+
+VMP_RT_MBOX_ANNOUNCEMENT  (32)
+
+struct {
+} VMPMiddleboxAnnouncement;
+
+The VMP middlebox announcement message is always sent encapsulated in a VMP subchannel. The message is empty, and only serves to alert the server of the middlebox’s presence. 
+
+
+
+
+
+
+
+# define SSL3_MT_ATTESTATION                     17
+		</pre>
+
+
+
+	</div>  <!-- col -->
+</div>  <!-- row -->
